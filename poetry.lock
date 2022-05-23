@@ -106,7 +106,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 name = "coverage"
 version = "6.3.3"
 description = "Code coverage measurement for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -517,7 +517,7 @@ testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xm
 name = "pytest-cov"
 version = "3.0.0"
 description = "Pytest plugin for measuring coverage."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -529,6 +529,7 @@ pytest = ">=4.6"
 testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtualenv"]
 
 [[package]]
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -582,6 +583,8 @@ python-versions = "*"
 >>>>>>> 615db1b (Updates to forward kinematics release branch. (#51))
 =======
 >>>>>>> ff805d4 (Fixes dynamic goal issues. Formats examples. Adds testing of examples. (#47))
+=======
+>>>>>>> 615db1b (Updates to forward kinematics release branch. (#51))
 name = "pyyaml"
 version = "6.0"
 description = "YAML parser and emitter for Python"
@@ -718,6 +721,7 @@ content-hash = "4d24b4b26cc0df6846563cb9752d5a8588ee3c95c3c77826cb1ac5b7b1bfac93
 python-versions = "^3.6.2,<3.11"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 content-hash = "1a282e955970b9e9b928aacd14c1e6c7807bc9dcaf4a50ee148e3c1c57be3b43"
 >>>>>>> ff805d4 (Fixes dynamic goal issues. Formats examples. Adds testing of examples. (#47))
 =======
@@ -726,6 +730,9 @@ content-hash = "8704a006affdbaae2e72a83ce0abfe36c1edd1adde78250d37c2e6d6f1e47402
 =======
 content-hash = "1a282e955970b9e9b928aacd14c1e6c7807bc9dcaf4a50ee148e3c1c57be3b43"
 >>>>>>> ff805d4 (Fixes dynamic goal issues. Formats examples. Adds testing of examples. (#47))
+=======
+content-hash = "8704a006affdbaae2e72a83ce0abfe36c1edd1adde78250d37c2e6d6f1e47402"
+>>>>>>> 615db1b (Updates to forward kinematics release branch. (#51))
 
 [metadata.files]
 astroid = [
@@ -1171,12 +1178,17 @@ pycodestyle = [
 ]
 pyglet = [
 <<<<<<< HEAD
+<<<<<<< HEAD
     {file = "pyglet-1.5.26-py3-none-any.whl", hash = "sha256:529b7b1198df3a8399b9621a99ca5e29cd32bb98428bd0e8ba699afa4ba96d2b"},
     {file = "pyglet-1.5.26.zip", hash = "sha256:ee8c5e0b5b87df84188e20e552982eba8da00944b4c5560f1cfdd5c9714d19b0"},
 =======
     {file = "pyglet-1.5.24-py3-none-any.whl", hash = "sha256:1268a604b2268419cad94e95e42711553463f602c101f2bd48eb6eacaf9c306c"},
     {file = "pyglet-1.5.24.zip", hash = "sha256:5b4a4d5e5ad54946e31492eac67f7292e51a6577244641a277180f90a0192a8e"},
 >>>>>>> ff805d4 (Fixes dynamic goal issues. Formats examples. Adds testing of examples. (#47))
+=======
+    {file = "pyglet-1.5.26-py3-none-any.whl", hash = "sha256:529b7b1198df3a8399b9621a99ca5e29cd32bb98428bd0e8ba699afa4ba96d2b"},
+    {file = "pyglet-1.5.26.zip", hash = "sha256:ee8c5e0b5b87df84188e20e552982eba8da00944b4c5560f1cfdd5c9714d19b0"},
+>>>>>>> 615db1b (Updates to forward kinematics release branch. (#51))
 ]
 pylint = [
     {file = "pylint-2.13.9-py3-none-any.whl", hash = "sha256:705c620d388035bdd9ff8b44c5bcdd235bfb49d276d488dd2c8ff1736aa42526"},
@@ -1206,6 +1218,7 @@ pytest-cov = [
 ]
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> ff805d4 (Fixes dynamic goal issues. Formats examples. Adds testing of examples. (#47))
 pytest-cover = [
@@ -1232,6 +1245,8 @@ pytz = [
 >>>>>>> 615db1b (Updates to forward kinematics release branch. (#51))
 =======
 >>>>>>> ff805d4 (Fixes dynamic goal issues. Formats examples. Adds testing of examples. (#47))
+=======
+>>>>>>> 615db1b (Updates to forward kinematics release branch. (#51))
 pyyaml = [
     {file = "PyYAML-6.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d4db7c7aef085872ef65a8fd7d6d09a14ae91f691dec3e87ee5ee0539d516f53"},
     {file = "PyYAML-6.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:9df7ed3b3d2e0ecfe09e14741b857df43adb5a3ddadc919a2d94fbdf78fea53c"},
@@ -1359,6 +1374,9 @@ typed-ast = [
     {file = "typed_ast-1.5.4-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:98f80dee3c03455e92796b58b98ff6ca0b2a6f652120c263efdba4d6c5e58f72"},
     {file = "typed_ast-1.5.4-cp39-cp39-win_amd64.whl", hash = "sha256:0fdbcf2fef0ca421a3f5912555804296f0b0960f0418c440f5d6d3abb549f3e1"},
     {file = "typed_ast-1.5.4.tar.gz", hash = "sha256:39e21ceb7388e4bb37f4c679d72707ed46c2fbf2a5609b8b8ebc4b067d977df2"},
+<<<<<<< HEAD
+>>>>>>> 615db1b (Updates to forward kinematics release branch. (#51))
+=======
 >>>>>>> 615db1b (Updates to forward kinematics release branch. (#51))
 ]
 typing-extensions = [
