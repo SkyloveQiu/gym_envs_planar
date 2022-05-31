@@ -9,30 +9,34 @@ class GroundRobotArmVelEnv(GroundRobotArmEnv):
         self.observation_space = spaces.Dict(
             {
                 "x": spaces.Box(
-                    low=-self._limUpPos, high=self._limUpPos, dtype=np.float32
+                    low=-self._lim_up_pos,
+                    high=self._lim_up_pos,
+                    dtype=np.float64
                 ),
                 "q": spaces.Box(
-                    low=-self._limUpArmPos,
-                    high=self._limUpArmPos,
-                    dtype=np.float32,
+                    low=-self._lim_up_arm_pos,
+                    high=self._lim_up_arm_pos,
+                    dtype=np.float64,
                 ),
                 "xdot": spaces.Box(
-                    low=-self._limUpVel, high=self._limUpVel, dtype=np.float32
+                    low=-self._lim_up_vel,
+                    high=self._lim_up_vel,
+                    dtype=np.float64
                 ),
                 "vel": spaces.Box(
-                    low=-self._limUpRelVel,
-                    high=self._limUpRelVel,
-                    dtype=np.float32,
+                    low=-self._lim_up_rel_vel,
+                    high=self._lim_up_rel_vel,
+                    dtype=np.float64,
                 ),
                 "qdot": spaces.Box(
-                    low=-self._limUpArmVel,
-                    high=self._limUpArmVel,
-                    dtype=np.float32,
+                    low=-self._lim_up_arm_vel,
+                    high=self._lim_up_arm_vel,
+                    dtype=np.float64,
                 ),
             }
         )
-        a = np.concatenate((self._limUpRelVel, self._limUpArmVel))
-        self.action_space = spaces.Box(low=-a, high=a, dtype=np.float32)
+        a = np.concatenate((self._lim_up_rel_vel, self._lim_up_arm_vel))
+        self.action_space = spaces.Box(low=-a, high=a, dtype=np.float64)
 
     def integrate(self):
         super().integrate()
