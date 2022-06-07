@@ -4,6 +4,7 @@ from abc import abstractmethod
 from gym import spaces
 import logging
 
+from scipy.spatial import distance
 from planarenvs.planar_common.planar_env import PlanarEnv
 
 
@@ -67,12 +68,24 @@ class PointRobotEnv(PlanarEnv):
     def set_spaces(self):
         pass
 
+    def _terminal(self):
+        current_position = tuple(self._fk.numpy(
+            self._state["x"], len(self._state["x"]), True))
+        goal_position = tuple(self._goals[0]._contentDict["desired_position"])
+        epsilon = self._goals[0]._contentDict["epsilon"]
+        gap = distance.euclidean(current_position, goal_position)
+        return gap <= epsilon
+
     def _reward(self):
-        reward = -1.0 if not self._terminal() else 0.0
+        current_position = tuple(self._fk.numpy(
+            self._state["x"], len(self._state["x"]), True))
+        goal_position = tuple(self._goals[0]._contentDict["desired_position"])
+        epsilon = self._goals[0]._contentDict["epsilon"]
+   
+        gap = distance.euclidean(current_position, goal_position)
+        reward = 1 if gap <= epsilon else 0.0
         return reward
 
-    def _terminal(self):
-        return False
 
     @abstractmethod
     def continuous_dynamics(self, x, t):
