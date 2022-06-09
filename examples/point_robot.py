@@ -1,8 +1,12 @@
 # pylint: disable=import-outside-toplevel
+from pyexpat import model
 import gym
 import planarenvs.point_robot  # pylint: disable=unused-import
 import numpy as np
 
+
+from stable_baselines3 import DDPG, SAC, PPO # pylint: disable=unused-import
+from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise # pylint: disable=unused-import
 # This example showcases the psedo-sensor and requires goals and obstacles.
 # As a result, it requires the optional package motion_planning_scenes.
 
@@ -15,7 +19,7 @@ def time_variant_action(t):
 
 def run_point_robot(
     n_steps: int = 1000,
-    render: bool = False,
+    render: bool = True,
     goal: bool = False,
     obstacles: bool = False,
 ):
@@ -51,10 +55,10 @@ def run_point_robot(
             ObstacleSensor,
         )
 
-        obst_sensor_pos = ObstacleSensor(nb_obstacles=2, mode="position")
-        env.add_sensor(obst_sensor_pos)
-        obst_sensor_dist = ObstacleSensor(nb_obstacles=2, mode="distance")
-        env.add_sensor(obst_sensor_dist)
+        # obst_sensor_pos = ObstacleSensor(nb_obstacles=2, mode="position")
+        # env.add_sensor(obst_sensor_pos)
+        # obst_sensor_dist = ObstacleSensor(nb_obstacles=2, mode="distance")
+        # env.add_sensor(obst_sensor_dist)
         goal_dist_observer = GoalSensor(nb_goals=1, mode="distance")
         env.add_sensor(goal_dist_observer)
         goal_pos_observer = GoalSensor(nb_goals=1, mode="position")
@@ -76,23 +80,31 @@ def run_point_robot(
         from examples.goal import (
             splineGoal,
             lineGoal,
+            staticGoal
         )
 
-        env.add_goal(splineGoal)
-        env.add_goal(lineGoal)
-
+        env.add_goal(staticGoal)
+        #env.add_goal(lineGoal)
+    n_action = env.action_space.shape[-1]
+    print(n_action)
+    model = SAC("MultiInputPolicy",env,verbose=1)
+    model.learn(total_timesteps=100000,log_interval=10)
+    model.save("point_robot")
+    model = SAC.load("point_robot")
     print("Starting episode")
     observation_history = []
+    obs = env.reset()
     for i in range(n_steps):
-        action = time_variant_action(env.t())
-        ob, _, _, _ = env.step(action)
+        action, _states = model.predict(obs,deterministic=True)
+        ob, reward, done, info = env.step(action)
         observation_history.append(ob)
+        env.render()
         if i % 100 == 0:
             print(f"ob : {ob}")
     return observation_history
 
 
 if __name__ == "__main__":
-    obstacles = True
+    obstacles = False
     goal = True
     run_point_robot(render=True, obstacles=obstacles, goal=goal)

@@ -11,24 +11,24 @@ class GroundRobotAccEnv(GroundRobotEnv):
                 "x": spaces.Box(
                     low=-self._lim_up_pos,
                     high=self._lim_up_pos,
-                    dtype=np.float64
+                    dtype=np.float32
                 ),
                 "xdot": spaces.Box(
                     low=-self._lim_up_vel,
                     high=self._lim_up_vel,
-                    dtype=np.float64
+                    dtype=np.float32
                 ),
                 "vel": spaces.Box(
                     low=-self._lim_up_rel_vel,
                     high=self._lim_up_rel_vel,
-                    dtype=np.float64,
+                    dtype=np.float32,
                 ),
             }
         )
         self.action_space = spaces.Box(
             low=-self._lim_up_rel_acc,
             high=self._lim_up_rel_acc,
-            dtype=np.float64
+            dtype=np.float32
         )
 
     def integrate(self):

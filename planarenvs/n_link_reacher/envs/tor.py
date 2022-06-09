@@ -18,17 +18,17 @@ class NLinkTorReacherEnv(NLinkReacherEnv):
                 "x": spaces.Box(
                     low=-self._lim_up_pos,
                     high=self._lim_up_pos,
-                    dtype=np.float64
+                    dtype=np.float32
                 ),
                 "xdot": spaces.Box(
                     low=-self._lim_up_vel,
                     high=self._lim_up_vel,
-                    dtype=np.float64
+                    dtype=np.float32
                 ),
             }
         )
         self.action_space = spaces.Box(
-            low=-self._lim_up_tor, high=self._lim_up_tor, dtype=np.float64
+            low=-self._lim_up_tor, high=self._lim_up_tor, dtype=np.float32
         )
 
     def continuous_dynamics(self, x, t):

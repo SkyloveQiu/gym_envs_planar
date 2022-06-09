@@ -47,6 +47,7 @@ class PlanarEnv(core.Env):
         self.observation_space = None
         self._n = None
         self._emergency_stop = False
+        self._step = 0
 
     @property
     def n(self):
@@ -88,10 +89,9 @@ class PlanarEnv(core.Env):
         return self._t
 
     def reset_common(self):
-        self._obsts = []
-        self._sensors = []
         self._t = 0.0
         self._emergency_stop = False
+        self._step = 0
 
     def reset(self, pos: np.ndarray = None, vel: np.ndarray = None) -> dict:
         self.reset_common()
@@ -104,6 +104,7 @@ class PlanarEnv(core.Env):
         return self._get_ob()
 
     def step(self, action: np.ndarray) -> tuple:
+        self._step += 1
         self._action = action
         self.integrate()
         for sensor in self._sensors:

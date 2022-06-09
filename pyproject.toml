@@ -7,12 +7,12 @@ authors = ["Max Spahn <m.spahn@tudelft.nl>"]
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
 gym = "^0.21.0"
-numpy = "^1.19.0"
+numpy = "1.22.3"
 pyglet = "1.5.23"
 scipy = "^1.5"
 casadi = "3.5.6.pre2"
 forwardkinematics = {git = "https://git@github.com/maxspahn/forwardKinematics.git", rev = "main"}
-motion-planning-scenes = {git= "https://git@github.com/maxspahn/motion_planning_scenes.git", optional = false, rev = "4560575"}
+motion-planning-scenes = {git= "https://git@github.com/maxspahn/motion_planning_scenes.git", rev = "main", optional = false}
 pylint = "^2.13.3"
 stable-baselines3 = "^1.5.0"
 

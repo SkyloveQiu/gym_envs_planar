@@ -11,32 +11,32 @@ class GroundRobotArmAccEnv(GroundRobotArmEnv):
                 "x": spaces.Box(
                     low=-self._lim_up_pos,
                     high=self._lim_up_pos,
-                    dtype=np.float64
+                    dtype=np.float32
                 ),
                 "q": spaces.Box(
                     low=-self._lim_up_arm_pos,
                     high=self._lim_up_arm_pos,
-                    dtype=np.float64,
+                    dtype=np.float32,
                 ),
                 "xdot": spaces.Box(
                     low=-self._lim_up_vel,
                     high=self._lim_up_vel,
-                    dtype=np.float64
+                    dtype=np.float32
                 ),
                 "vel": spaces.Box(
                     low=-self._lim_up_rel_vel,
                     high=self._lim_up_rel_vel,
-                    dtype=np.float64,
+                    dtype=np.float32,
                 ),
                 "qdot": spaces.Box(
                     low=-self._lim_up_arm_vel,
                     high=self._lim_up_arm_vel,
-                    dtype=np.float64,
+                    dtype=np.float32,
                 ),
             }
         )
         a = np.concatenate((self._lim_up_rel_acc, self._lim_up_arm_acc))
-        self.action_space = spaces.Box(low=-a, high=a, dtype=np.float64)
+        self.action_space = spaces.Box(low=-a, high=a, dtype=np.float32)
 
     def continuous_dynamics(self, x, t):
         # state = [x, y, theta, vel, xdot_base, q, qdot)

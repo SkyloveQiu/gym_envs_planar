@@ -14,6 +14,7 @@ class PointRobotEnv(PlanarEnv):
     MAX_POS = 10
     MAX_ACC = 10
     MAX_FOR = 100
+    MAX_STEP = 10000
 
     def __init__(self, n=2, dt=0.01, render=False):
         super().__init__(render=render, dt=dt)
@@ -58,10 +59,10 @@ class PointRobotEnv(PlanarEnv):
         self._lim_up_acc = self._limits["acc"]["high"]
         self._lim_up_for = self._limits["for"]["high"]
         self.observation_space.spaces["x"] = spaces.Box(
-            low=-self._lim_up_pos, high=self._lim_up_pos, dtype=np.float64
+            low=-self._lim_up_pos, high=self._lim_up_pos, dtype=np.float32
         )
         self.observation_space.spaces["xdot"] = spaces.Box(
-            low=-self._lim_up_vel, high=self._lim_up_vel, dtype=np.float64
+            low=-self._lim_up_vel, high=self._lim_up_vel, dtype=np.float32
         )
 
     @abstractmethod
@@ -69,21 +70,22 @@ class PointRobotEnv(PlanarEnv):
         pass
 
     def _terminal(self):
-        current_position = tuple(self._fk.numpy(
-            self._state["x"], len(self._state["x"]), True))
+        current_position = tuple(self._state["x"][0:2])
         goal_position = tuple(self._goals[0]._contentDict["desired_position"])
         epsilon = self._goals[0]._contentDict["epsilon"]
         gap = distance.euclidean(current_position, goal_position)
+        if self._emergency_stop or self._step >= self.MAX_STEP:
+            return True
         return gap <= epsilon
 
     def _reward(self):
-        current_position = tuple(self._fk.numpy(
-            self._state["x"], len(self._state["x"]), True))
+        current_position = tuple(self._state["x"][0:2])
         goal_position = tuple(self._goals[0]._contentDict["desired_position"])
         epsilon = self._goals[0]._contentDict["epsilon"]
-   
         gap = distance.euclidean(current_position, goal_position)
-        reward = 1 if gap <= epsilon else 0.0
+        if self._emergency_stop:
+            return -10
+        reward = 10 if gap <= epsilon else 0.0
         return reward
 
 
