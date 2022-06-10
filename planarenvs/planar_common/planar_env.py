@@ -81,7 +81,6 @@ class PlanarEnv(core.Env):
     def add_sensor(self, sensor):
         self._sensors.append(sensor)
         observation_space_dict = dict(self.observation_space.spaces)
-        print(sensor.name)
         observation_space_dict[sensor.name] = sensor.observation_space()
         self.observation_space = spaces.Dict(observation_space_dict)
 
