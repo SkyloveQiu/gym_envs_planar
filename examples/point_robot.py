@@ -46,7 +46,7 @@ def run_point_robot(
     env.reset_limits(
         pos={"high": np.array([2.0, 3.0]), "low": np.array([-2.0, -3.0])}
     )
-    sensors = True
+    sensors = False
     if sensors:
         from planarenvs.sensors.goal_sensor import (
             GoalSensor,
@@ -89,7 +89,7 @@ def run_point_robot(
     action_noise = NormalActionNoise(mean=np.zeros(n_action),sigma=0.1*np.ones(n_action))
     print(n_action)
     model = DDPG("MultiInputPolicy",env,action_noise=action_noise,verbose=1)
-    model.learn(total_timesteps=100000,log_interval=10)
+    model.learn(total_timesteps=1000,log_interval=10)
     model.save("point_robot")
     model = DDPG.load("point_robot")
     print("Starting episode")

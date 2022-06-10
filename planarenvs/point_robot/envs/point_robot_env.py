@@ -14,7 +14,7 @@ class PointRobotEnv(PlanarEnv):
     MAX_POS = 10
     MAX_ACC = 10
     MAX_FOR = 100
-    MAX_STEP = 10000
+    MAX_STEP = 200
 
     def __init__(self, n=2, dt=0.01, render=False):
         super().__init__(render=render, dt=dt)
@@ -76,7 +76,7 @@ class PointRobotEnv(PlanarEnv):
         gap = distance.euclidean(current_position, goal_position)
         if self._emergency_stop or self._step >= self.MAX_STEP:
             return True
-        return gap <= epsilon
+        return gap <= 0.1
 
     def _reward(self):
         current_position = tuple(self._state["x"][0:2])
@@ -85,8 +85,9 @@ class PointRobotEnv(PlanarEnv):
         gap = distance.euclidean(current_position, goal_position)
         if self._emergency_stop:
             return -10
-        reward = 10 if gap <= epsilon else 0.0
-        return reward
+        if gap <= 0.1:
+            return 1
+        return -gap
 
 
     @abstractmethod
