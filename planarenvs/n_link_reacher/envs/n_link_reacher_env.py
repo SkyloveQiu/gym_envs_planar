@@ -18,6 +18,7 @@ class NLinkReacherEnv(PlanarEnv):
     MAX_POS = pi
     MAX_ACC = 9 * pi
     MAX_TOR = 0.1
+    MAX_STEP = 300
 
     def __init__(self, render=False, n=2, dt=0.01):
         super().__init__(render=render, dt=dt)
@@ -36,23 +37,22 @@ class NLinkReacherEnv(PlanarEnv):
     def _terminal(self):
         current_position = tuple(self._fk.numpy(
             self._state["x"], len(self._state["x"]), True))
-        goal_position = tuple(self._goals[0]._contentDict["desired_position"])
+        goal_position = tuple(self._sensor_state['GoalPosition'])
         epsilon = self._goals[0]._contentDict["epsilon"]
         gap = distance.euclidean(current_position, goal_position)
         if self._emergency_stop:
             return True
-        return gap <= epsilon
+        return self._step >= self.MAX_STEP
 
     def _reward(self):
         current_position = tuple(self._fk.numpy(
             self._state["x"], len(self._state["x"]), True))
-        goal_position = tuple(self._goals[0]._contentDict["desired_position"])
+        goal_position = tuple(self._sensor_state['GoalPosition'])
         epsilon = self._goals[0]._contentDict["epsilon"]
         if self._emergency_stop:
             return -10
         gap = distance.euclidean(current_position, goal_position)
-        reward = 1 if gap <= epsilon else 0.0
-        return reward
+        return -gap
 
     @abstractmethod
     def continuous_dynamics(self, x, t):

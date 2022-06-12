@@ -88,10 +88,10 @@ def run_point_robot(
     n_action = env.action_space.shape[-1]
     action_noise = NormalActionNoise(mean=np.zeros(n_action),sigma=0.1*np.ones(n_action))
     print(n_action)
-    model = DDPG("MultiInputPolicy",env,action_noise=action_noise,verbose=1)
+    model = SAC("MultiInputPolicy",env,action_noise=action_noise,verbose=1)
     model.learn(total_timesteps=1000,log_interval=10)
     model.save("point_robot")
-    model = DDPG.load("point_robot")
+    model = SAC.load("point_robot")
     print("Starting episode")
     observation_history = []
     obs = env.reset()

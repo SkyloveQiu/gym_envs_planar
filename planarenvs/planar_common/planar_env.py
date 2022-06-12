@@ -88,6 +88,7 @@ class PlanarEnv(core.Env):
         return self._t
 
     def reset_common(self):
+        self._obsts = []
         self._t = 0.0
         self._emergency_stop = False
         self._step = 0
@@ -98,8 +99,13 @@ class PlanarEnv(core.Env):
             pos = np.zeros(self._n)
         if not isinstance(vel, np.ndarray) or not vel.size == self._n:
             vel = np.zeros(self._n)
+
         self._state = {"x": pos, "xdot": vel}
         self._sensor_state = {}
+        for sensor in self._sensors:
+            self._sensor_state[sensor.name] = sensor.sense(
+                self._state, self._goals, self._obsts, self.t()
+            )
         return self._get_ob()
 
     def step(self, action: np.ndarray) -> tuple:
