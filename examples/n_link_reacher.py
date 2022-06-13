@@ -20,42 +20,42 @@ obstacles = False
 goal = True
 
 
-class CheckpointCallback(BaseCallback):
-    """
-    Callback for saving a model every ``save_freq`` calls
-    to ``env.step()``.
+# class CheckpointCallback(BaseCallback):
+#     """
+#     Callback for saving a model every ``save_freq`` calls
+#     to ``env.step()``.
 
-    .. warning::
+#     .. warning::
 
-      When using multiple environments, each call to  ``env.step()``
-      will effectively correspond to ``n_envs`` steps.
-      To account for that, you can use ``save_freq = max(save_freq // n_envs, 1)``
+#       When using multiple environments, each call to  ``env.step()``
+#       will effectively correspond to ``n_envs`` steps.
+#       To account for that, you can use ``save_freq = max(save_freq // n_envs, 1)``
 
-    :param save_freq:
-    :param save_path: Path to the folder where the model will be saved.
-    :param name_prefix: Common prefix to the saved models
-    :param verbose:
-    """
+#     :param save_freq:
+#     :param save_path: Path to the folder where the model will be saved.
+#     :param name_prefix: Common prefix to the saved models
+#     :param verbose:
+#     """
 
-    def __init__(self, save_freq: int, save_path: str, name_prefix: str = "rl_model", verbose: int = 0):
-        super(CheckpointCallback, self).__init__(verbose)
-        self.save_freq = save_freq
-        self.save_path = save_path
-        self.name_prefix = name_prefix
+#     def __init__(self, save_freq: int, save_path: str, name_prefix: str = "rl_model", verbose: int = 0):
+#         super(CheckpointCallback, self).__init__(verbose)
+#         self.save_freq = save_freq
+#         self.save_path = save_path
+#         self.name_prefix = name_prefix
 
-    def _init_callback(self) -> None:
-        # Create folder if needed
-        if self.save_path is not None:
-            os.makedirs(self.save_path, exist_ok=True)
+#     def _init_callback(self) -> None:
+#         # Create folder if needed
+#         if self.save_path is not None:
+#             os.makedirs(self.save_path, exist_ok=True)
 
-    def _on_step(self) -> bool:
-        if self.n_calls % self.save_freq == 0:
-            staticGoal.shuffle()
-            path = os.path.join(self.save_path, f"{self.name_prefix}_{self.num_timesteps}_steps")
-            self.model.save(path)
-            if self.verbose > 1:
-                print(f"Saving model checkpoint to {path}")
-        return True
+#     def _on_step(self) -> bool:
+#         if self.n_calls % self.save_freq == 0:
+#             staticGoal.shuffle()
+#             path = os.path.join(self.save_path, f"{self.name_prefix}_{self.num_timesteps}_steps")
+#             self.model.save(path)
+#             if self.verbose > 1:
+#                 print(f"Saving model checkpoint to {path}")
+#         return True
 
 def make_env(env_id, rank, seed=0):
     """
@@ -113,9 +113,7 @@ def run_n_link_reacher(
 
     The n-link-arm is a n-degrees of freedom robotic arm operating in the
     two-dimensional plane. In a sense, it is extended pendulum. The observation
-    is the state of the joints:
-        x: [`q`]
-        xdot: [`qdot`]
+    is the state of the joints:8
     """
     env_id = "nLink-reacher-vel-v0"
     n = 2
@@ -152,10 +150,10 @@ def run_n_link_reacher(
     #         splineGoal,
     #     )
     #     env.add_goal(splineGoal)
-    checkpoint_callback = CheckpointCallback(save_freq=5000, save_path='./logs/',
-                                         name_prefix='rl_model')
+    # checkpoint_callback = CheckpointCallback(save_freq=5000, save_path='./logs/',
+                                        #  name_prefix='rl_model')
     model = SAC("MultiInputPolicy", env, verbose=1,learning_rate=0.001)
-    model.learn(total_timesteps=1000000, log_interval=10,callback=checkpoint_callback)
+    model.learn(total_timesteps=1000000, log_interval=10)
     model.save("SAC")
     model = SAC.load("SAC")
     action = np.ones(n) * 8 * 0.01

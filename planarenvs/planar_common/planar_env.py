@@ -91,6 +91,7 @@ class PlanarEnv(core.Env):
         return self._t
 
     def reset_common(self):
+        self._goals[0].shuffle()
         self._obsts = []
         self._t = 0.0
         self._emergency_stop = False
