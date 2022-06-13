@@ -3,6 +3,7 @@ from cmath import e
 from random import uniform
 from tabnanny import check
 import gym
+from matplotlib.pyplot import step
 from torch import rand
 import planarenvs.n_link_reacher  # pylint: disable=unused-import
 import numpy as np
@@ -18,7 +19,24 @@ from goal import staticGoal
 obstacles = False
 goal = True
 
-def goalChangeCallback(CheckpointCallback):
+
+class CheckpointCallback(BaseCallback):
+    """
+    Callback for saving a model every ``save_freq`` calls
+    to ``env.step()``.
+
+    .. warning::
+
+      When using multiple environments, each call to  ``env.step()``
+      will effectively correspond to ``n_envs`` steps.
+      To account for that, you can use ``save_freq = max(save_freq // n_envs, 1)``
+
+    :param save_freq:
+    :param save_path: Path to the folder where the model will be saved.
+    :param name_prefix: Common prefix to the saved models
+    :param verbose:
+    """
+
     def __init__(self, save_freq: int, save_path: str, name_prefix: str = "rl_model", verbose: int = 0):
         super(CheckpointCallback, self).__init__(verbose)
         self.save_freq = save_freq
@@ -32,17 +50,12 @@ def goalChangeCallback(CheckpointCallback):
 
     def _on_step(self) -> bool:
         if self.n_calls % self.save_freq == 0:
-            self.env.reset_goal()
-            staticGoal["desired_position"] = [uniform(-2,2),uniform(-2,2)]
-            self.env.add_goal(staticGoal)
+            staticGoal.shuffle()
             path = os.path.join(self.save_path, f"{self.name_prefix}_{self.num_timesteps}_steps")
             self.model.save(path)
             if self.verbose > 1:
                 print(f"Saving model checkpoint to {path}")
         return True
-
-
-
 
 def make_env(env_id, rank, seed=0):
     """
@@ -139,7 +152,7 @@ def run_n_link_reacher(
     #         splineGoal,
     #     )
     #     env.add_goal(splineGoal)
-    checkpoint_callback = goalChangeCallback(save_freq=5000, save_path='./logs/',
+    checkpoint_callback = CheckpointCallback(save_freq=5000, save_path='./logs/',
                                          name_prefix='rl_model')
     model = SAC("MultiInputPolicy", env, verbose=1,learning_rate=0.001)
     model.learn(total_timesteps=1000000, log_interval=10,callback=checkpoint_callback)
@@ -154,7 +167,24 @@ def run_n_link_reacher(
         obs, _, _, _ = env.step(action)
 
 
+def simulate_n_link_reacher():
+    env = gym.make("nLink-reacher-vel-v0", render = True, n=2,dt = 0.01)
+    from planarenvs.sensors.goal_sensor import (
+                GoalSensor,
+            )
+    goal_dist_observer = GoalSensor(nb_goals=1, mode="distance")
+    env.add_sensor(goal_dist_observer)
+    goal_pos_observer = GoalSensor(nb_goals=1, mode="position")
+    env.add_sensor(goal_pos_observer)
+    env.add_goal(staticGoal)
+    model = SAC.load("SAC")
+    obs = env.reset()
+    n_steps = 10000
+    for i in range(n_steps):
+        action, _state = model.predict(obs,deterministic=True)
+        obs, _, _, _ = env.step(action)
+
 if __name__ == "__main__":
     obstacles = True
     goal = True
-    run_n_link_reacher(goal=goal, obstacles=obstacles)
+    simulate_n_link_reacher()
