@@ -15,7 +15,7 @@ from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.callbacks import BaseCallback
-from goal import staticGoal
+from goal import staticGoal,splineGoal
 obstacles = False
 goal = True
 
@@ -97,7 +97,7 @@ def make_env(env_id, rank, seed=0):
             env.add_obstacle(sphereObst2)
             env.add_obstacle(dynamicSphereObst2)
         if goal:
-            env.add_goal(staticGoal)
+            env.add_goal(splineGoal)
         return env
     set_random_seed(seed)
     return _init
@@ -153,7 +153,7 @@ def run_n_link_reacher(
     # checkpoint_callback = CheckpointCallback(save_freq=5000, save_path='./logs/',
                                         #  name_prefix='rl_model')
     model = SAC("MultiInputPolicy", env, verbose=1,learning_rate=0.001)
-    model.learn(total_timesteps=1000000, log_interval=10)
+    model.learn(total_timesteps=2000000, log_interval=10)
     model.save("SAC")
     model = SAC.load("SAC")
     action = np.ones(n) * 8 * 0.01
@@ -174,7 +174,7 @@ def simulate_n_link_reacher():
     env.add_sensor(goal_dist_observer)
     goal_pos_observer = GoalSensor(nb_goals=1, mode="position")
     env.add_sensor(goal_pos_observer)
-    env.add_goal(staticGoal)
+    env.add_goal(splineGoal)
     model = SAC.load("SAC")
     obs = env.reset()
     n_steps = 10000
