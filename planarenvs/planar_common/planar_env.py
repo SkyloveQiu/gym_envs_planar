@@ -78,6 +78,9 @@ class PlanarEnv(core.Env):
     def add_goal(self, goal):
         self._goals.append(goal)
 
+    def reset_goal(self):
+        self._goals.clear()
+
     def add_sensor(self, sensor):
         self._sensors.append(sensor)
         observation_space_dict = dict(self.observation_space.spaces)

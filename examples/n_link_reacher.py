@@ -1,16 +1,48 @@
 # pylint: disable=import-outside-toplevel
 from cmath import e
+from random import uniform
+from tabnanny import check
 import gym
+from torch import rand
 import planarenvs.n_link_reacher  # pylint: disable=unused-import
 import numpy as np
+import os
 
 from stable_baselines3 import DDPG, SAC
 from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.utils import set_random_seed
+from stable_baselines3.common.callbacks import BaseCallback
+from goal import staticGoal
 obstacles = False
 goal = True
+
+def goalChangeCallback(CheckpointCallback):
+    def __init__(self, save_freq: int, save_path: str, name_prefix: str = "rl_model", verbose: int = 0):
+        super(CheckpointCallback, self).__init__(verbose)
+        self.save_freq = save_freq
+        self.save_path = save_path
+        self.name_prefix = name_prefix
+
+    def _init_callback(self) -> None:
+        # Create folder if needed
+        if self.save_path is not None:
+            os.makedirs(self.save_path, exist_ok=True)
+
+    def _on_step(self) -> bool:
+        if self.n_calls % self.save_freq == 0:
+            self.env.reset_goal()
+            staticGoal["desired_position"] = [uniform(-2,2),uniform(-2,2)]
+            self.env.add_goal(staticGoal)
+            path = os.path.join(self.save_path, f"{self.name_prefix}_{self.num_timesteps}_steps")
+            self.model.save(path)
+            if self.verbose > 1:
+                print(f"Saving model checkpoint to {path}")
+        return True
+
+
+
 
 def make_env(env_id, rank, seed=0):
     """
@@ -52,10 +84,7 @@ def make_env(env_id, rank, seed=0):
             env.add_obstacle(sphereObst2)
             env.add_obstacle(dynamicSphereObst2)
         if goal:
-            from examples.goal import (
-                splineGoal,
-            )
-            env.add_goal(splineGoal)
+            env.add_goal(staticGoal)
         return env
     set_random_seed(seed)
     return _init
@@ -77,7 +106,7 @@ def run_n_link_reacher(
     """
     env_id = "nLink-reacher-vel-v0"
     n = 2
-    num_cpu = 200
+    num_cpu = 20
     env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
     # sensors = True
     # if sensors:
@@ -110,8 +139,10 @@ def run_n_link_reacher(
     #         splineGoal,
     #     )
     #     env.add_goal(splineGoal)
+    checkpoint_callback = goalChangeCallback(save_freq=5000, save_path='./logs/',
+                                         name_prefix='rl_model')
     model = SAC("MultiInputPolicy", env, verbose=1,learning_rate=0.001)
-    model.learn(total_timesteps=10000000, log_interval=10)
+    model.learn(total_timesteps=1000000, log_interval=10,callback=checkpoint_callback)
     model.save("SAC")
     model = SAC.load("SAC")
     action = np.ones(n) * 8 * 0.01
