@@ -3,7 +3,7 @@ import time
 from abc import abstractmethod
 
 from forwardkinematics.planarFks.mobileRobotFk import MobileRobotFk
-
+from scipy.spatial import distance
 from planarenvs.planar_common.planar_env import PlanarEnv
 
 
@@ -51,16 +51,24 @@ class MobileRobotEnv(PlanarEnv):
         return self._state
 
     def _terminal(self):
-        if (
-            self._state["x"][0] > self.MAX_POS_BASE
-            or self._state["x"][0] < -self.MAX_POS_BASE
-        ):
+        current_position = tuple(self._fk.numpy(
+            self._state["x"], len(self._state["x"]), True))
+        goal_position = tuple(self._sensor_state['GoalPosition'])
+        epsilon = self._goals[0]._contentDict["epsilon"]
+        gap = distance.euclidean(current_position, goal_position)
+        if self._emergency_stop:
             return True
-        return False
+        return self._step >= self.MAX_STEP
 
     def _reward(self):
-        reward = -1.0 if not self._terminal() else 0.0
-        return reward
+        current_position = tuple(self._fk.numpy(
+            self._state["x"], len(self._state["x"]), True))
+        goal_position = tuple(self._sensor_state['GoalPosition'])
+        epsilon = self._goals[0]._contentDict["epsilon"]
+        if self._emergency_stop:
+            return -10
+        gap = distance.euclidean(current_position, goal_position)
+        return -gap
 
     @abstractmethod
     def continuous_dynamics(self, x, t):
